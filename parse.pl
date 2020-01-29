@@ -15,7 +15,7 @@ sub main {
 	mkdir "results" unless -d "results";
 
 	my @ids = ();
-	if($start =~ m#playlist#) {
+	if($start =~ m#list#) {
 		push @ids, dl_playlist($start);
 	} else {
 		push @ids, $start;
@@ -38,7 +38,7 @@ sub main {
 
 sub transcribe {
 	my $id = shift;
-	mysystem "youtube-dl --sub-lang=de --write-auto-sub --skip-download $id -o dl/$id";
+	mysystem qq#youtube-dl --sub-lang=de --write-auto-sub --skip-download "$id" -o dl/$id#;
 
 	return "dl/$id.de.vtt";
 }
@@ -55,7 +55,6 @@ sub dl_playlist {
 
 	return @list;
 }
-
 
 sub texter {
 	my $file = shift;

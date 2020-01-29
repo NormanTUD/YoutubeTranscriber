@@ -11,3 +11,8 @@ and can more easily find special positions in videos.
 # What you need
 
 You need to have youtube-dl installed for this. 
+
+# Examples
+
+Check the `results`-folder for examples. See the youtube-videos (you can get them via the id in the filename)
+for the original videos.

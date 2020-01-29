@@ -21,24 +21,26 @@ sub main {
 		push @ids, $start;
 	}
 
-	foreach my $id (@ids) {
+	foreach my $id (sort { $b cmp $a } @ids) {
 		my $fn = "$id.de.vtt";
 		if (-f "dl/$fn") {
 			warn "dl/$fn already exists. Skipping this...";
 			next;
 		}
 		my $downloaded_filename = transcribe($id);
-		my $contents = parse_vtt($downloaded_filename);
-		open my $fh, '>', "results/$id.txt" or die $!;
-		$contents = "Dieser Mitschnitt basiert auf den von YouTube erstellten Subtitel-Daten.\nDas Skript findet sich unter https://github.com/NormanTUD/YoutubeTranscriber und ist frei verfügbar.\n\n$contents";
-		print $fh $contents;
-		close $fh;
+		if(-e $downloaded_filename) {
+			my $contents = parse_vtt($downloaded_filename);
+			open my $fh, '>', "results/$id.txt" or die $!;
+			$contents = "Dieser Mitschnitt basiert auf den von YouTube erstellten Subtitel-Daten.\nDas Skript findet sich unter https://github.com/NormanTUD/YoutubeTranscriber und ist frei verfügbar.\n\n$contents";
+			print $fh $contents;
+			close $fh;
+		}
 	}
 }
 
 sub transcribe {
 	my $id = shift;
-	mysystem qq#youtube-dl --sub-lang=de --write-auto-sub --skip-download "$id" -o dl/$id#;
+	mysystem qq#youtube-dl --sub-lang=de --write-auto-sub --skip-download "$id" -o "dl/$id"#;
 
 	return "dl/$id.de.vtt";
 }
@@ -55,15 +57,6 @@ sub dl_playlist {
 
 	return @list;
 }
-
-sub texter {
-	my $file = shift;
-
-	my $contents = parse_vtt($file);
-	return $contents;
-}
-
-# youtube-dl --sub-lang=de --write-auto-sub --skip-download https://www.youtube.com/watch\?v\=5E2EjUx_5Vs -o dl/5E2EjUx_5Vs
 
 sub parse_vtt {
 	my $filename = shift;
